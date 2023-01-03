@@ -1,0 +1,11 @@
+*.DS_Store
+*.egg-info
+*.log
+*.py[cod]
+*.sw[nop]
+.cache/
+.coverage
+.eggs
+.tox
+__pycache__/
+venv*
