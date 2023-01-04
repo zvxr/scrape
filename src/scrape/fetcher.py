@@ -5,13 +5,17 @@ from src.scrape.settings import Settings
 from src.scrape.console import console
 
 
-class Scraper:
+class Fetcher:
     def __init__(self, settings: Settings):
         self.base_url = settings.fetcher_base_url
         self.relative_urls = settings.fetcher_relative_urls
         self.resources_path = settings.db_resources_path
         self.resources_left = settings.fetcher_max_resources
         self.max_depth = settings.fetcher_max_depth
+        console.log(f"Loaded {self}")
+
+    def __repr__(self):
+        return f"Fetcher(base_url={self.base_url} resources_left={self.resources_left}"
 
     async def crawl(self, client, relative_url, depth=0):
         if not self.resources_left:
