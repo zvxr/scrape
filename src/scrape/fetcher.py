@@ -26,25 +26,36 @@ class Fetcher:
             console.log(f"Maximum depth reached. Aborting {relative_url}.")
             return
 
-        resp = await client.get(f"{self.base_url}{relative_url}")
+        url = f"{self.base_url}{relative_url}"
+        resp = await client.get(url)
+        if not 200 <= resp.status_code < 300:
+            console.log(f"Non 2xx response from {url}: {resp.content}")
+            return
+
         html = resp.content
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html, features="html.parser")
 
-        # Check if resource is a table.
-        table = soup.find_all("table")
-        if len(table) > 0:
-            console.log(f"Table detected in {relative_url}: processing {len(table)} items.")
-            for link in table[0].find_all("a"):
-                link_url = link.get("href")
-                if link_url.split("/")[-1].split(".")[-1] == "html":
-                    await self.crawl(client, f"{relative_url}/{link_url}", depth=depth + 1)
-                # TODO -- handle non html/href?
+        if len(soup.find_all("table")) == 1:
+            urls = [row.text for row in soup.find_all("table")[0].find_all('a', href=True)]
         else:
-            await self.process(relative_url, html)
-            self.resources_left -= 1
+            # TODO clean-up, maybe use function
+            urls = [row.find("a").text for row in soup.find_all("div", {"class": "ftr"})]
 
-    async def process(self, relative_url, html):
-        console.log(f"process {relative_url}.")
+        for url in urls:
+            if not self.resources_left:
+                console.log(f"No more resources to process. Aborting {relative_url}.")
+                return
+            resource_path = f"{relative_url}{url}"
+            if resource_path.endswith("/"):
+                await self.crawl(client, resource_path, depth=depth+1)
+            elif resource_path.endswith(".html"):
+                console.log(f"Ignoring {resource_path} (HTML not supported)")
+            else:
+                await self.process(resource_path)
+
+    async def process(self, resource_path):
+        console.log(f"process {resource_path}")
+        self.resources_left -= 1
 
     async def execute(self) -> bool:
         async with httpx.AsyncClient() as client:
