@@ -4,12 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+aiosql = "*"
+alembic = "*"
 beautifulsoup4 = "*"
 httpx = "*"
 jsonschema = "*"
 pydantic = "*"
 python-dotenv = "*"
 rich = "*"
+sqlalchemy = "*"
 typer = "*"
 
 [dev-packages]

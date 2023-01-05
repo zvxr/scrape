@@ -2,12 +2,12 @@ from asyncio import run as aiorun
 
 import typer
 
-from src.scrape.settings import Settings
+from src.scrape.settings import get_settings
 from src.scrape.fetcher import Fetcher
 
 
 async def _main():
-    settings = Settings()
+    settings = get_settings()
     fetch = Fetcher(settings)
     await fetch.execute()
 

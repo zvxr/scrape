@@ -5,6 +5,7 @@ from pydantic import BaseSettings, validator
 
 
 RELATIVE_DIR_REGEX = re.compile(r"^\/[\w\-_]+\/$")
+SETTINGS = None
 
 
 class Settings(BaseSettings):
@@ -13,7 +14,7 @@ class Settings(BaseSettings):
     fetcher_relative_urls: str|List[str] = []
     fetcher_max_resources: int = 10
     fetcher_max_depth: int = 2
-    db_resources_path: str = "src/scrape/db/data"
+    db_resources_path: str = "src/data"
 
     @validator("fetcher_relative_urls", pre=True, always=True)
     def split_relative_urls_verify_format(cls, v):
@@ -27,3 +28,10 @@ class Settings(BaseSettings):
         env_file = "/Users/djrahl/Documents/p/n/scrape/.env"
         env_file_encoding = "utf-8"
         env_prefix = "scrape_"
+
+
+def get_settings():
+    global SETTINGS
+    if not SETTINGS:
+        SETTINGS = Settings()
+    return SETTINGS
