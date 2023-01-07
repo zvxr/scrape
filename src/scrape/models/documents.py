@@ -22,7 +22,7 @@ class Keyword(Base):
     document_id = Column(GUID(), ForeignKey("document.id"))
 
 
-class Documents(Base):
+class Document(Base):
     __tablename__ = "document"
 
     resource_path = Column(String, nullable=False, unique=True)

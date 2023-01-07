@@ -18,6 +18,8 @@ class Settings(BaseSettings):
 
     @validator("fetcher_relative_urls", pre=True, always=True)
     def split_relative_urls_verify_format(cls, v):
+        if not v:
+            return []
         urls = v.split(",")
         for url in urls:
             if not re.match(RELATIVE_DIR_REGEX, url):
@@ -25,7 +27,7 @@ class Settings(BaseSettings):
         return urls
 
     class Config:
-        env_file = "/Users/djrahl/Documents/p/n/scrape/.env"
+        env_file = ".env"
         env_file_encoding = "utf-8"
         env_prefix = "scrape_"
 

@@ -1,8 +1,10 @@
 import httpx
 from bs4 import BeautifulSoup
 
-from src.scrape.settings import Settings
+from src.scrape.db import db_session
 from src.scrape.console import console
+from src.scrape.settings import Settings
+from src.scrape.data_mappers.documents import get_document
 
 
 class Fetcher:
@@ -55,7 +57,11 @@ class Fetcher:
 
     async def process(self, resource_path):
         console.log(f"process {resource_path}")
-        self.resources_left -= 1
+        async with db_session() as session:
+            document = await get_document(resource_path, session)
+            console.log(f"results for {resource_path}: {document}")
+            if document:
+                self.resources_left -= 1
 
     async def execute(self) -> bool:
         async with httpx.AsyncClient() as client:
@@ -65,3 +71,6 @@ class Fetcher:
                     return True
                 await self.crawl(client, relative_url)
 
+    async def test_process(self):
+        for r in ('a', 'b'):
+            await self.process(r)

@@ -9,7 +9,8 @@ from src.scrape.fetcher import Fetcher
 async def _main():
     settings = get_settings()
     fetch = Fetcher(settings)
-    await fetch.execute()
+    await fetch.test_process()
+    #await fetch.execute()
 
 
 def main():

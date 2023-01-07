@@ -1,18 +1,16 @@
-from sqlalchemy.ext.asyncio import create_async_engine
+from contextlib import asynccontextmanager
+
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from src.scrape.settings import get_settings
 
 
-ENGINE = None
-
-
-async with engine.connect() as conn:
-    result = await conn.execute(select(table))
-
-
-def get_engine():
-    global ENGINE
-    if not ENGINE:
-        settings = get_settings()
-        ENGINE = create_async_engine("sqlite+aiosqlite:///{settings.db_file}")
-    return ENGINE
+@asynccontextmanager
+async def db_session():
+    settings = get_settings()
+    engine = create_async_engine(f"sqlite+aiosqlite:///{settings.db_file}")
+    async with AsyncSession(engine) as session:
+        async with session.begin():
+            yield session
+        await session.commit()
+    await engine.dispose()
