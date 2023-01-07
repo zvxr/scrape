@@ -1,9 +1,6 @@
 import uuid
 
-from sqlalchemy import (
-    Column,
-    DateTime,
-)
+import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 from sqlalchemy.sql.functions import current_timestamp
@@ -51,10 +48,18 @@ class Base:
     def __tablename__(cls):
         return cls.__name__.lower()
 
-    id = Column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
-    created_at = Column(DateTime, default=current_timestamp())
-    updated_at = Column(
-        DateTime,
-        default=current_timestamp(),
-        onupdate=current_timestamp(),
+    id = sa.Column(
+        GUID(),
+        primary_key=True,
+        server_default=sa.text("uuid()"),
+    )
+    created_at = sa.Column(
+        sa.DateTime,
+        nullable=False,
+        server_default=sa.func.now(),
+    )
+    updated_at = sa.Column(
+        sa.DateTime,
+        server_default=sa.func.now(),
+        server_onupdate=sa.func.now(),
     )

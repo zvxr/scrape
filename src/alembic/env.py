@@ -5,8 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 
-import src.scrape.models
-from src.scrape.models.base import Base
+import src.app.models
+from src.app.models.documents import Document
+from src.app.models.base import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -23,10 +24,10 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 
 # This was first needed when starting out, as metadata did not seem to connect.
-#from src.scrape.models.documents import *
-#target_metadata = Encryption.metadata
-
-target_metadata = Base.metadata
+#from src.app.models.documents import *
+# Note: applying to the standard Base.metadata does not seem to work.
+# So picking a table that derives itself from metadata.
+target_metadata = Document.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

@@ -1,18 +1,25 @@
+import enum
+
 from sqlalchemy import (
-    Boolean,
     Column,
+    Enum,
     ForeignKey,
     String,
     UniqueConstraint,
 )
 from sqlalchemy.orm import relationship, backref
 
-from src.scrape.models.base import Base, GUID
+from src.app.models.base import Base, GUID
+
+
+class EncryptionEnum(enum.Enum):
+    fernet = 1
 
 
 class Encryption(Base):
     __tablename__ = "encryption"
 
+    enum_id = Column(Enum(EncryptionEnum), nullable=False, unique=True)
     description = Column(String, nullable=False)
 
 
@@ -27,6 +34,5 @@ class Document(Base):
 
     resource_path = Column(String, nullable=False, unique=True)
     url = Column(String, nullable=False)
-    encryption_id = Column(GUID(), ForeignKey("encryption.id"))
+    encryption_id = Column(GUID(), ForeignKey("encryption.id"), nullable=False)
     keywords = relationship("Keyword", backref=backref("document"))
-    should_update = Column(Boolean, default=False, nullable=False)

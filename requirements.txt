@@ -1,0 +1,12 @@
+aiosql
+aiosqlite
+alembic
+beautifulsoup4
+cryptography
+httpx
+jsonschema
+pydantic
+python-dotenv
+rich
+sqlalchemy
+typer

@@ -2,15 +2,14 @@ from asyncio import run as aiorun
 
 import typer
 
-from src.scrape.settings import get_settings
-from src.scrape.fetcher import Fetcher
+from src.app.settings import get_settings
+from src.app.fetcher import Fetcher
 
 
 async def _main():
     settings = get_settings()
     fetch = Fetcher(settings)
-    await fetch.test_process()
-    #await fetch.execute()
+    await fetch.execute()
 
 
 def main():

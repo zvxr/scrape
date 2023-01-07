@@ -1,10 +1,10 @@
 import httpx
 from bs4 import BeautifulSoup
 
-from src.scrape.db import db_session
-from src.scrape.console import console
-from src.scrape.settings import Settings
-from src.scrape.data_mappers.documents import get_document
+from src.app.console import console
+from src.app.data_mappers.documents import get_document
+from src.app.db import db_session
+from src.app.settings import Settings
 
 
 class Fetcher:
@@ -60,7 +60,8 @@ class Fetcher:
         async with db_session() as session:
             document = await get_document(resource_path, session)
             console.log(f"results for {resource_path}: {document}")
-            if document:
+            if not document:
+
                 self.resources_left -= 1
 
     async def execute(self) -> bool:
@@ -70,7 +71,3 @@ class Fetcher:
                     console.log("No more resources to process. Ending execute.")
                     return True
                 await self.crawl(client, relative_url)
-
-    async def test_process(self):
-        for r in ('a', 'b'):
-            await self.process(r)

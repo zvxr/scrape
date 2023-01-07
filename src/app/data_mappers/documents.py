@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.scrape.models.documents import Document
+from src.app.models.documents import Document, Encryption
 
 
 async def get_document(resource_path: str, session: AsyncSession) -> Document:
