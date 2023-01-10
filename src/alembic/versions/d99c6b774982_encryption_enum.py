@@ -1,8 +1,8 @@
-"""empty message
+"""encryption enum
 
-Revision ID: 1f64f383eda4
-Revises: 9e24468294ff
-Create Date: 2023-01-07 10:28:57.091578
+Revision ID: d99c6b774982
+Revises: 469b2d591a58
+Create Date: 2023-01-09 15:45:54.429938
 
 """
 from uuid import uuid4
@@ -14,8 +14,8 @@ from src.app.models.documents import Encryption, EncryptionEnum
 
 
 # revision identifiers, used by Alembic.
-revision = '1f64f383eda4'
-down_revision = '9e24468294ff'
+revision = 'd99c6b774982'
+down_revision = '469b2d591a58'
 branch_labels = None
 depends_on = None
 

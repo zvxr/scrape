@@ -9,3 +9,4 @@
 .tox
 __pycache__/
 venv*
+src/data

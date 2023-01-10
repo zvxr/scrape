@@ -1,7 +1,7 @@
 from cryptography.fernet import Fernet
 
 from src.app.models.documents import EncryptionEnum
-from src.settings import get_settings
+from src.app.settings import get_settings
 
 
 def _decrypt_fernet(data: str):
@@ -16,10 +16,10 @@ def _encrypt_fernet(data: str):
     return f.encrypt(data)
 
 
-def decrypt(data: str, encryption: EncryptionEnum = EncryptionEnum.fernet):
-    if encryption == EncryptionEnum.fernet:
-        return _encrypt_fernet(data)
-
-def encrypt(data: str, encryption: EncryptionEnum = EncryptionEnum.fernet):
+def decrypt(data: bytes, encryption: EncryptionEnum = EncryptionEnum.fernet):
     if encryption == EncryptionEnum.fernet:
         return _decrypt_fernet(data)
+
+def encrypt(data: bytes, encryption: EncryptionEnum = EncryptionEnum.fernet):
+    if encryption == EncryptionEnum.fernet:
+        return _encrypt_fernet(data)

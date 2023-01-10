@@ -1,10 +1,19 @@
-import httpx
+from uuid import UUID, uuid4
+
+import aiofiles
 from bs4 import BeautifulSoup
+import httpx
 
 from src.app.console import console
-from src.app.data_mappers.documents import get_document
+from src.app.crypto import encrypt
+from src.app.data_mappers.documents import (
+    get_document,
+    get_encryption,
+    insert_document,
+)
 from src.app.db import db_session
 from src.app.settings import Settings
+from app.models.documents import Document, EncryptionEnum
 
 
 class Fetcher:
@@ -53,15 +62,36 @@ class Fetcher:
             elif resource_path.endswith(".html"):
                 console.log(f"Ignoring {resource_path} (HTML not supported)")
             else:
-                await self.process(resource_path)
+                await self.process(resource_path, client)
 
-    async def process(self, resource_path):
+    async def download(self, resource_path, client):
+        console.log(f"downloading {resource_path}")
+        url = f"{self.base_url}{resource_path}"
+        resp = await client.get(url)
+        if not 200 <= resp.status_code < 300:
+            console.log(f"Non 2xx response from {url}: {resp.content}")
+            return False
+
+        async with db_session() as session:
+            encryption = await get_encryption(EncryptionEnum.fernet.name, session)
+            encrypted = encrypt(resp.content, encryption.enum_id)
+            id_ = uuid4()
+            await self.write_file(encrypted, id_)
+            params = {
+                "id": id_,
+                "resource_path": resource_path,
+                "url": url,
+                "encryption_id": encryption.id,
+            }
+            await insert_document(params, session)
+
+    async def process(self, resource_path, client):
         console.log(f"process {resource_path}")
         async with db_session() as session:
             document = await get_document(resource_path, session)
             console.log(f"results for {resource_path}: {document}")
             if not document:
-
+                await self.download(resource_path, client)
                 self.resources_left -= 1
 
     async def execute(self) -> bool:
@@ -71,3 +101,8 @@ class Fetcher:
                     console.log("No more resources to process. Ending execute.")
                     return True
                 await self.crawl(client, relative_url)
+
+    async def write_file(self, data: bytes, id_: UUID):
+        file_path = f"{self.resources_path}/{str(id_)}"
+        async with aiofiles.open(file_path, mode="xb") as fl:
+            await fl.write(data)

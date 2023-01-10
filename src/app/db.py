@@ -7,15 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from src.app.settings import get_settings
 
 
-@event.listens_for(Engine, "connect")
-def receive_connect(conn, conn_record):
-
-    # Enable UUID extension.
-    conn.enable_load_extension(True)
-    conn.execute("SELECT load_extension('uuid.c');")
-    conn.enable_load_extension(False)
-
-
 @asynccontextmanager
 async def db_session():
     settings = get_settings()

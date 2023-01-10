@@ -18,6 +18,7 @@ class EncryptionEnum(enum.Enum):
 
 class Encryption(Base):
     __tablename__ = "encryption"
+    __table_args__ = {"extend_existing": True}
 
     enum_id = Column(Enum(EncryptionEnum), nullable=False, unique=True)
     description = Column(String, nullable=False)
@@ -25,14 +26,15 @@ class Encryption(Base):
 
 class Keyword(Base):
     __tablename__ = "keyword"
+    __table_args__ = {"extend_existing": True}
 
     document_id = Column(GUID(), ForeignKey("document.id"))
 
 
 class Document(Base):
     __tablename__ = "document"
+    __table_args__ = {"extend_existing": True}
 
     resource_path = Column(String, nullable=False, unique=True)
     url = Column(String, nullable=False)
     encryption_id = Column(GUID(), ForeignKey("encryption.id"), nullable=False)
-    keywords = relationship("Keyword", backref=backref("document"))

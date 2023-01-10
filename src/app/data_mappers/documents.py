@@ -1,7 +1,7 @@
-from sqlalchemy import select
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.app.models.documents import Document, Encryption
+from src.app.models.documents import Document, Encryption, EncryptionEnum
 
 
 async def get_document(resource_path: str, session: AsyncSession) -> Document:
@@ -9,3 +9,13 @@ async def get_document(resource_path: str, session: AsyncSession) -> Document:
     res = await session.execute(stmt)
     return res.scalar()
 
+
+async def get_encryption(encryption: EncryptionEnum, session: AsyncSession) -> Encryption:
+    stmt = select(Encryption).where(Encryption.enum_id == encryption).limit(1)
+    res = await session.execute(stmt)
+    return res.scalar()
+
+
+async def insert_document(params: dict, session: AsyncSession) -> Document:
+    stmt = insert(Document).values(**params)
+    await session.execute(stmt)

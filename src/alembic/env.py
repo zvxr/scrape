@@ -22,12 +22,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-
-# This was first needed when starting out, as metadata did not seem to connect.
-#from src.app.models.documents import *
-# Note: applying to the standard Base.metadata does not seem to work.
-# So picking a table that derives itself from metadata.
-target_metadata = Document.metadata
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

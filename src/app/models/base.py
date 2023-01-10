@@ -50,8 +50,7 @@ class Base:
 
     id = sa.Column(
         GUID(),
-        primary_key=True,
-        server_default=sa.text("uuid()"),
+        primary_key=True
     )
     created_at = sa.Column(
         sa.DateTime,
