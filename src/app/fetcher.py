@@ -7,7 +7,7 @@ import httpx
 from src.app.console import console
 from src.app.crypto import encrypt
 from src.app.data_mappers.documents import (
-    get_document,
+    get_document_by_resource_path,
     get_encryption,
     insert_document,
 )
@@ -88,7 +88,7 @@ class Fetcher:
     async def process(self, resource_path, client):
         console.log(f"process {resource_path}")
         async with db_session() as session:
-            document = await get_document(resource_path, session)
+            document = await get_document_by_resource_path(resource_path, session)
             console.log(f"results for {resource_path}: {document}")
             if not document:
                 await self.download(resource_path, client)
