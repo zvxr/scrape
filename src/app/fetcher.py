@@ -19,6 +19,7 @@ from app.models.documents import Document, EncryptionEnum
 class Fetcher:
     def __init__(self, settings: Settings):
         self.base_url = settings.fetcher_base_url
+        self.offset = settings.fetcher_offset
         self.relative_urls = settings.fetcher_relative_urls
         self.resources_path = settings.db_resources_path
         self.resources_left = settings.fetcher_max_resources
@@ -52,6 +53,10 @@ class Fetcher:
             # TODO clean-up, maybe use function
             urls = [row.find("a").text for row in soup.find_all("div", {"class": "ftr"})]
 
+        # Manage offset, applies only to top level.
+        if depth == 0 and self.offset:
+            urls = urls[self.offset:]
+
         for url in urls:
             if not self.resources_left:
                 console.log(f"No more resources to process. Aborting {relative_url}.")
@@ -72,6 +77,8 @@ class Fetcher:
             console.log(f"Non 2xx response from {url}: {resp.content}")
             return False
 
+        import time
+        time.sleep(0.2)
         async with db_session() as session:
             encryption = await get_encryption(EncryptionEnum.fernet.name, session)
             encrypted = encrypt(resp.content, encryption.enum_id)

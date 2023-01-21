@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     db_file: str
     fetcher_base_url: str
     fetcher_fernet_secret: str
+    fetcher_offset: int = 0
     fetcher_relative_urls: str|List[str] = []
     fetcher_max_resources: int = 10
     fetcher_max_depth: int = 2
