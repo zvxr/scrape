@@ -77,8 +77,6 @@ class Fetcher:
             console.log(f"Non 2xx response from {url}: {resp.content}")
             return False
 
-        import time
-        time.sleep(0.2)
         async with db_session() as session:
             encryption = await get_encryption(EncryptionEnum.fernet.name, session)
             encrypted = encrypt(resp.content, encryption.enum_id)
